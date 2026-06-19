@@ -190,6 +190,7 @@ export const profileCommand = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply();
     const targetUser = interaction.options.getUser("user") || interaction.user;
     const stats = db.getUserStats(targetUser.id);
     const defaults = db.getUserDefaults(targetUser.id);
@@ -248,7 +249,7 @@ export const profileCommand = {
       });
     }
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.editReply({ embeds: [embed] });
   },
 };
 
@@ -575,19 +576,24 @@ export const helpCommand = {
     await interaction.reply({ embeds: [embed], flags: 64 });
   },
 };
+
 export const preferencesCommand = {
   data: new SlashCommandBuilder()
     .setName("preferences")
     .setDescription("Set your activity preferences to find your perfect group"),
   async execute(interaction) {
+    if (interaction.isChatInputCommand && interaction.isChatInputCommand()) {
+      await interaction.deferReply({ flags: 64 });
+    } else {
+      await interaction.deferReply({ ephemeral: true });
+    }
     const roleMap = { Runner: "run", Hiker: "hike", Cyclist: "cycle" };
     const roles = ["Runner", "Hiker", "Cyclist"].filter((n) =>
-      interaction.member.roles.cache.some((r) => r.name === n),
+      interaction.member.roles?.cache.some((r) => r.name === n),
     );
     if (!roles.length)
-      return interaction.reply({
+      return interaction.editReply({
         content: "Grab a role (Runner, Hiker, Cyclist) first.",
-        flags: 64,
       });
 
     // Create one select menu per role
@@ -611,6 +617,6 @@ export const preferencesCommand = {
       .setDescription(
         "Choose the styles that best describe your routines so others know what to expect.",
       );
-    await interaction.reply({ embeds: [embed], components: rows, flags: 64 });
+    await interaction.editReply({ embeds: [embed], components: rows });
   },
 };
