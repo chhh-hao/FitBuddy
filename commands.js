@@ -562,7 +562,7 @@ export const helpCommand = {
       .setTitle("How to use FitBuddy")
       .setDescription(
         "**Create a meetup**\n" +
-          "'/beacon details: tomorrow 9am run at city park' \n \n " +
+          "`/beacon` details: tomorrow 9am run at city park \n \n " +
           "**Set your activity style**\n" +
           "`/preferences`\n\n" +
           "**View your profile**\n" +
